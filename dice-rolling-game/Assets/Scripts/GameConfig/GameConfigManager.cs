@@ -27,13 +27,17 @@ public class GameConfigManager : MonoBehaviour {
     void UnzipGameData()
     {
         string unZipDataCheck = Path.Combine(Application.persistentDataPath, GameDataConstant.UnZipFilePath);
+        print(unZipDataCheck);
 
         //unzip data
-        if (!Directory.Exists(unZipDataCheck))
+        if (!File.Exists(unZipDataCheck))
         {
             string zipName = Path.Combine(Application.streamingAssetsPath, GameDataConstant.GameZipName);
             ZipUtil.Unzip(zipName, Application.persistentDataPath);
             print("unzip done");
+        } else
+        {
+            print("already unzipped");
         }
 
         gameConfigUiManager.DoLoadingAnimation(CompleteLoadingAnimation);

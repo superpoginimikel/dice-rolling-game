@@ -9,6 +9,10 @@ public class GameConfigUiManager : MonoBehaviour {
     public Image loadingProgresssBar;
     public GameObject startButton;
 
+    float minProgressBarValue = 0f;
+    float maxProgressBarValue = 1f;
+    float totalProgressBarLoadDuration = 1f;
+
     public void ShowVersionUpdatePanel()
     {
         // show version update panel
@@ -22,20 +26,17 @@ public class GameConfigUiManager : MonoBehaviour {
 
     IEnumerator TempDoLoading(Action OnFinished)
     {
-        float minProgressBarValue = 0f;
-        float maxProgressBarValue = 1f;
         float elapsedTime = 0f;
-        float totalDuration = 1f;
-
         float fillAmountValue = 0f;
 
-        while (elapsedTime < totalDuration)
+        while (elapsedTime < totalProgressBarLoadDuration)
         {
-            fillAmountValue = Mathf.Lerp(minProgressBarValue, maxProgressBarValue, (elapsedTime / totalDuration));
+            fillAmountValue = Mathf.Lerp(minProgressBarValue, maxProgressBarValue, (elapsedTime / totalProgressBarLoadDuration));
             elapsedTime += Time.deltaTime;
             loadingProgresssBar.fillAmount = fillAmountValue;
             yield return null;
         }
+        loadingProgresssBar.fillAmount = 1f;
 
         OnFinished();
     }
