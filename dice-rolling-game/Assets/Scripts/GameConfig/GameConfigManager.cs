@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System;
+using UnityEngine.SceneManagement;
 using System.IO;
 
 public class GameConfigManager : MonoBehaviour {
@@ -10,6 +10,7 @@ public class GameConfigManager : MonoBehaviour {
 	void Start () {
         print(Application.persistentDataPath);
         VersionCheck();
+        gameConfigUiManager.StartLoadingAnimation();
     }
 
     void VersionCheck()
@@ -26,25 +27,30 @@ public class GameConfigManager : MonoBehaviour {
 
     void UnzipGameData()
     {
-        string unZipDataCheck = Path.Combine(Application.persistentDataPath, GameDataConstant.UnZipFilePath);
+        string unZipDataCheck = Path.Combine(Application.persistentDataPath, GameDataConstant.GameConfigJsonFile);
         print(unZipDataCheck);
 
         //unzip data
         if (!File.Exists(unZipDataCheck))
         {
-            string zipName = Path.Combine(Application.streamingAssetsPath, GameDataConstant.GameZipName);
-            ZipUtil.Unzip(zipName, Application.persistentDataPath);
+            string zipPath = Path.Combine(Application.streamingAssetsPath, GameDataConstant.GameZipName);
+            GameUtil.UnZip(zipPath, Application.persistentDataPath);
             print("unzip done");
         } else
         {
             print("already unzipped");
         }
 
-        gameConfigUiManager.DoLoadingAnimation(CompleteLoadingAnimation);
-    }
-
-    void CompleteLoadingAnimation()
-    {
         gameConfigUiManager.CompleteLoading();
     }
+
+    #region OnClickFunctions
+
+    public void OnClickStartButton()
+    {
+        // do level transition rather than just loading scene
+        SceneManager.LoadScene("GameMenu");
+    }
+
+    #endregion
 }
