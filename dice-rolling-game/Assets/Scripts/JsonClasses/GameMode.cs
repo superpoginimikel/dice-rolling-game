@@ -1,4 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+
+[Serializable]
+public class GameModesList
+{
+    public List<GameMode> GameList;
+}
 
 [Serializable]
 public class GameMode {
