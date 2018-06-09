@@ -48,7 +48,7 @@ public class GameConfigManager : MonoBehaviour {
 
     public void OnClickStartButton()
     {
-        // do level transition rather than just loading scene
+        // Run loading scene script to add transition
         SceneManager.LoadScene("GameMenu");
     }
 

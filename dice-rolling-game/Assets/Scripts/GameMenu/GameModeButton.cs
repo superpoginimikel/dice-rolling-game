@@ -24,9 +24,10 @@ public class GameModeButton : MonoBehaviour {
 
     public void OnClickGameButton()
     {
-        AccountManager.Instance.GameModeId = this.gameModeId;
+        AccountManager.Instance.GameId = this.gameModeId;
         print("game mode id :::" + gameModeId);
 
+        // Run loading scene script to add transition
         SceneManager.LoadScene("GameScene");
     }
 

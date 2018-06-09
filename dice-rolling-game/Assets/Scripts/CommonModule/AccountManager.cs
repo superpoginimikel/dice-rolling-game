@@ -11,7 +11,7 @@ public class AccountManager : Singleton<AccountManager> {
         set { PlayerPrefs.SetInt(GameDataConstant.CoinsKey, value); }
     }
 
-    public int GameModeId
+    public int GameId
     {
         get { return PlayerPrefs.GetInt(GameDataConstant.GameIdKey, -1); }
         set { PlayerPrefs.SetInt(GameDataConstant.GameIdKey, value); }
