@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
-    public enum BetTypes
+    public static GameManager instance;
+    private void Awake()
     {
-        BigSmall,
-        OddEven,
-        Pairs,
-        AnyNumber,
-        AnyQuadrouple,
-        NumberExist
+        instance = this;
     }
+
+    public GameUiManager gameUiManager;
+    private int wagerAmount;
 
     void Start()
     {
         GameDetails gameDetails = GetGameJson(AccountManager.Instance.GameId);
-
+        gameUiManager.SetGameUi(gameDetails);
         // do stuff
+    }
+
+    public void SelectWager(int wagerAmount)
+    {
+        this.wagerAmount = wagerAmount;
     }
 
     private GameDetails GetGameJson(int GameId)
@@ -29,8 +32,16 @@ public class GameManager : MonoBehaviour
         string gameDetailJson = GameUtil.GetJsonStringFromFile(jsonPath);
 
         GameDetails gameDetails = JsonUtility.FromJson<GameDetails>(gameDetailJson);
-        print("game details :: " + gameDetails.GameId);
+        print("game details :: " + JsonUtility.ToJson(gameDetails));
 
         return gameDetails;
     }
+
+    #region OnClick
+    public void OnClickPlayButton()
+    {
+        print("play button");
+        // create json and send to server
+    }
+    #endregion
 }
