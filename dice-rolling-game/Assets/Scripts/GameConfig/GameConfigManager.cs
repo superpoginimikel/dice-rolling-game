@@ -8,14 +8,13 @@ public class GameConfigManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        print(Application.persistentDataPath);
         VersionCheck();
         gameConfigUiManager.StartLoadingAnimation();
     }
 
     void VersionCheck()
     {
-        bool versionUpdate = false; // test var
+        bool versionUpdate = false; // test var 
         // check for any version update required
 
         if(versionUpdate) {
@@ -28,7 +27,6 @@ public class GameConfigManager : MonoBehaviour {
     void UnzipGameData()
     {
         string unZipDataCheck = Path.Combine(Application.persistentDataPath, GameDataConstant.GameConfigJsonFile);
-        print(unZipDataCheck);
 
         //unzip data
         if (!File.Exists(unZipDataCheck))

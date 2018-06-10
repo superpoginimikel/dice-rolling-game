@@ -9,8 +9,13 @@ public class WagerCoin : MonoBehaviour {
     private int amount;
     private Image wagerCoinImage;
 
+    public Button wagerButton;
     public Text wagerValueText;
 
+    public int GetWagerId()
+    {
+        return wagerId;
+    }
 
     public void Init(int wagerId, int amount, Sprite wagerCoinSprite)
     {
@@ -22,9 +27,22 @@ public class WagerCoin : MonoBehaviour {
         wagerValueText.text = amount.ToString();
     }
 
-    private void SaveSelectedWager()
+    public void SaveSelectedWager()
     {
-        GameManager.instance.SelectWager(amount);
+        GameManager.instance.SelectWager(wagerId, amount);
+    }
+
+    public void UpdateCoinSelectedUi(int totalAmount)
+    {
+        if(amount > totalAmount)
+        {
+            wagerButton.interactable = false;
+        }
+    }
+
+    public void UpdateCoinSelectedUi(bool isSelected)
+    {
+        wagerButton.interactable = !isSelected;
     }
 
     #region OnClick

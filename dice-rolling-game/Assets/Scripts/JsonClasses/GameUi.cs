@@ -18,4 +18,11 @@ public class GameUi : MonoBehaviour {
         public int WagerId;
         public Sprite WagerUiSprite;
     }
+
+    [Serializable]
+    public class BetTypes
+    {
+        public int BetTypeGroupId;
+        public GameObject BetTypePrefab;
+    }
 }

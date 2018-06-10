@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class GameDetails
 {
     public int GameId;
+    public string Name;
     public int VisualLayoutId;
     public List<Dice> DiceList;
     public List<Wagers> WagersList;
@@ -28,7 +29,7 @@ public class Wagers
 [Serializable]
 public class BetTypes
 {
-    public bool UseBet;
+    public bool ShowBet;
     public int BetTypeGroupId;
     public string BetName;
     public List<BetDetails> BetDetails;
@@ -37,9 +38,11 @@ public class BetTypes
 [Serializable]
 public class BetDetails
 {
-    public bool UseBet;
+    public bool ShowBet;
     public int BetId;
     public string BetName;
     public int Multiplier;
+    public int MinRange;
+    public int MaxRange;
 }
 

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameModeButton : MonoBehaviour {
 
     private int gameModeId;
-    private string jsonPath;
+   // private string jsonPath;
 
     public Image gameModeImage;
     public Text gameModeName;
@@ -17,7 +17,7 @@ public class GameModeButton : MonoBehaviour {
         this.gameModeId = gameModeId;
         this.gameModeName.text = gameModeName;
         this.gameModeImage.sprite = gameModeImage;
-        this.jsonPath = jsonPath;
+       // this.jsonPath = jsonPath;
     }
 
     #region OnClick
