@@ -1,18 +1,13 @@
 ﻿using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 public class BetGroup : MonoBehaviour {
 
-	public BetButton GetBetButtonById(int betButtonId)
-    {
-        foreach(Transform child in this.transform)
-        {
-            BetButton betButton = child.GetComponent<BetButton>();
-            if(betButton.betId == betButtonId)
-            {
-                return betButton;
-            }
-        }
+    public Transform betButtonParentTransform;
 
-        return null;
+    public Transform GetButtonParent()
+    {
+        return betButtonParentTransform;
     }
 }

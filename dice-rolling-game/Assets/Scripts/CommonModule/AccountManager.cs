@@ -32,6 +32,7 @@ public class AccountManager : Singleton<AccountManager> {
         {
             // create game menu
             gameModesList = JsonUtility.FromJson<GameModesList>(gameModesJsonString);
+            //print("game list ::" + JsonUtility.ToJson(gameModesList));
             return gameModesList;
         }
     }

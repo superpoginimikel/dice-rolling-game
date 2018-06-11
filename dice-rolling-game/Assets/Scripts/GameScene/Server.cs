@@ -5,10 +5,12 @@ using UnityEngine;
 public class Server : MonoBehaviour {
 
     // bet type group id
-    // 1 - big small, 2- pairs, 3- odd even, 4 - any quadruple, 5 number exist
-    
+    // 1 - big small, 2- pairs, 3- odd even, 4 - any quadruple, 5 number exist, 6 highest or lowest exist
+
     // bet type
-    // 1 small, 2 big, 3 pairs, 4 odd, 5 even, 6 any quadruople, 7-26 = any number from 1-20
+    // 1 small, 2 big, 3 pairs, 4 odd, 5 even, 6 any quadruople, 7-26 = any number from 1-20, 27 highest or lowest exist
+
+    public GameManager gameManager;
 
     GameDetails gameDetails;
     private List<Dice> gameDiceList;
@@ -25,6 +27,7 @@ public class Server : MonoBehaviour {
 	public void EvaluateGame(GameJsonToServer gameJson)
     {
         List<int> diceResult = RollDice();
+
         gameJsonFromServer = new GameJsonFromServer();
         gameJsonFromServer.diceRollList = diceResult;
         gameJsonFromServer.totalAmountWon = 0;
@@ -49,11 +52,14 @@ public class Server : MonoBehaviour {
                 case 5:
                     CheckForAnyNumberThatExist(diceResult, gameBet);
                     break;
+                case 6:
+                    CheckIfHighestOrLowestExist(diceResult, gameBet);
+                    break;
             }
         }
 
-        print("win :::" + JsonUtility.ToJson(gameJsonFromServer));
         // return result to game
+        gameManager.EvaluateWinningBets(gameJsonFromServer);
     }
 
     void AddNewWinningBetDetails(GameBet betMade, int amountWon)
@@ -67,7 +73,7 @@ public class Server : MonoBehaviour {
     {
         BetDetails betDetail = GetBetDetail(betMade.BetTypeGroupId, betMade.BetId);
         int multiplier = betDetail.Multiplier;
-        int amountWon = (betMade.Amount * multiplier) + betMade.Amount;
+        int amountWon = CalculateAmountWon(betMade.Amount, multiplier);
         AddNewWinningBetDetails(betMade, amountWon);
     }
 
@@ -93,16 +99,11 @@ public class Server : MonoBehaviour {
         {
             totalAmount += dice;
         }
-        print("total amount for big small ::" + totalAmount);
 
         BetDetails betDetail = GetBetDetail(betMade.BetTypeGroupId, betMade.BetId);
         if (totalAmount >= betDetail.MinRange && totalAmount <= betDetail.MaxRange)
         {
-            print("bet made that won::" + betMade.BetId);
-            int multiplier = betDetail.Multiplier;
-            int amountWon = (betMade.Amount * multiplier) + betMade.Amount;
-
-            AddNewWinningBetDetails(betMade, amountWon);
+            AddAmountWonAndSaveToList(betMade);
         }
     }
 
@@ -129,10 +130,7 @@ public class Server : MonoBehaviour {
 
         if (foundAPair)
         {
-            BetDetails betDetail = GetBetDetail(betMade.BetTypeGroupId, betMade.BetId);
-            int multiplier = betDetail.Multiplier;
-            int amountWon = (betMade.Amount * multiplier) + betMade.Amount;
-            AddNewWinningBetDetails(betMade, amountWon);
+            AddAmountWonAndSaveToList(betMade);
         }
     }
 
@@ -155,10 +153,7 @@ public class Server : MonoBehaviour {
 
         if(wasBetCorrect)
         {
-            BetDetails betDetail = GetBetDetail(betMade.BetTypeGroupId, betMade.BetId);
-            int multiplier = betDetail.Multiplier;
-            int amountWon = (betMade.Amount * multiplier) + betMade.Amount;
-            AddNewWinningBetDetails(betMade, amountWon);
+            AddAmountWonAndSaveToList(betMade);
         }
     }
 
@@ -211,6 +206,29 @@ public class Server : MonoBehaviour {
                 break;
             }
         }
+    }
+
+    void CheckIfHighestOrLowestExist(List<int> diceRollResultList, GameBet betMade)
+    {
+        BetDetails betDetail = GetBetDetail(betMade.BetTypeGroupId, betMade.BetId);
+        bool didExist = false;
+        foreach(int diceRoll in diceRollResultList)
+        {
+            if(betDetail.MinValue == diceRoll || betDetail.MaxValue == diceRoll)
+            {
+                didExist = true;
+            }
+        }
+
+        if (didExist)
+        {
+            AddAmountWonAndSaveToList(betMade);
+        }
+    }
+
+    int CalculateAmountWon(int amount, int multiplier)
+    {
+        return amount * multiplier;
     }
 
     // not used

@@ -6,7 +6,6 @@ public class GameConfigManager : MonoBehaviour {
 
     public GameConfigUiManager gameConfigUiManager;
 
-	// Use this for initialization
 	void Start () {
         VersionCheck();
         gameConfigUiManager.StartLoadingAnimation();
@@ -33,10 +32,10 @@ public class GameConfigManager : MonoBehaviour {
         {
             string zipPath = Path.Combine(Application.streamingAssetsPath, GameDataConstant.GameZipName);
             GameUtil.UnZip(zipPath, Application.persistentDataPath);
-            print("unzip done");
+            //print("unzip done");
         } else
         {
-            print("already unzipped");
+            //print("already unzipped");
         }
 
         gameConfigUiManager.CompleteLoading();

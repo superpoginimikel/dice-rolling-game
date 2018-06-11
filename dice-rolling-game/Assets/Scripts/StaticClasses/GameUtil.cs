@@ -7,7 +7,6 @@ public static class GameUtil
 {
     public static void UnZip(string zipName, string zipPath)
     {
-        
         ZipUtil.Unzip(zipName, zipPath);
     }
 
@@ -61,7 +60,6 @@ public static class GameUtil
         }
         catch (Exception)
         {
-            //CPLog.PrintCritical (ex.Message, CPLogEnum.LogCategories.GUI);
             return null;
         }
     }

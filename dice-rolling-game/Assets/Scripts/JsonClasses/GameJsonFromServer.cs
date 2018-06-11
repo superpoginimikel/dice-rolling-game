@@ -9,6 +9,7 @@ public class GameJsonFromServer {
     public List<WinningBetDetails> winningBetDetails;
 }
 
+[Serializable]
 public class WinningBetDetails
 {
     public int BetTypeGroupId;

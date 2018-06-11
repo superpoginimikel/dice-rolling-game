@@ -13,20 +13,34 @@ public class GameUiManager : MonoBehaviour {
     [Header("Game UI")]
     public Text gameNameText;
     public Image tableImage;
+    public Image resultPanelImage;
     public Text coinsText;
+    public Button playButton;
+
+    public GameObject helpButtonPanel;
+
+    [Space(5)]
+    [Header("loading animation mask related")]
+    public GameObject diceRollingLoadingGameObject;
+    public GameObject diceRollingAnimationTextGO;
+    public Text wonAmountText;
 
     [Space(5)]
     [Header("Prefabs")]
     public GameObject wagerPrefab;
+    public GameObject diceResultPrefab;
+    public GameObject betButtonPrefab;
 
     [Space(5)]
     [Header("Parents")]
     public Transform wagerParentTransform;
     public Transform betTypesParentTransform;
+    public Transform diceResultParentTransform;
+
+    private float wonAmountTextDelay = 1.5f;
 
     public Sprite GetTableUi(int visualId)
     {
-        print("visual id :::" + visualId);
         foreach (GameUi.TableUi table in tableUiList)
         {
             if (table.VisualLayoutId == visualId)
@@ -69,22 +83,71 @@ public class GameUiManager : MonoBehaviour {
         coinsText.text = coinsAmount.ToString();
     }
 
+    public void EnablePlayButton(bool isEnable)
+    {
+        playButton.interactable = isEnable;
+    }
+
+    public void ShowHideHelpPanel(bool isShow)
+    {
+        helpButtonPanel.SetActive(isShow);
+    }
+
+    public void ShowLoadingAnimationText()
+    {
+        diceRollingLoadingGameObject.SetActive(true);
+        diceRollingAnimationTextGO.SetActive(true);
+        wonAmountText.gameObject.SetActive(false);
+    }
+
+    void ShowWonAmount(int amountWon)
+    {
+        if(amountWon != 0)
+        {
+            wonAmountText.text = amountWon.ToString();
+            diceRollingAnimationTextGO.SetActive(false);
+            wonAmountText.gameObject.SetActive(true);
+            StartCoroutine(HideWonAmountText());
+        } else
+        {
+            diceRollingLoadingGameObject.SetActive(false);
+        }
+    }
+
+    IEnumerator HideWonAmountText()
+    {
+        yield return new WaitForSeconds(wonAmountTextDelay);
+        diceRollingLoadingGameObject.SetActive(false);
+        wonAmountText.gameObject.SetActive(false);
+    }
+
     public void SetGameUi(GameDetails gameDetails, int totalCoins)
     {
         gameNameText.text = gameDetails.Name;
         tableImage.sprite = GetTableUi(gameDetails.VisualLayoutId);
+        resultPanelImage.sprite = GetTableUi(gameDetails.VisualLayoutId);
         CreateWagers(gameDetails.WagersList);
         CreateBetTypes(gameDetails.BetTypes);
         SetCoinsText(totalCoins);
+        EnablePlayButton(false);
     }
 
-    public void WagerClickUpdateButtonInteractable(int wagerId)
+    public void WagerClickUpdateButtonInteractable(int wagerId, int totalCoins)
     {
         foreach(Transform child in wagerParentTransform)
         {
             WagerCoin childWagerCoin = child.GetComponent<WagerCoin>();
             bool isSelected = (childWagerCoin.GetWagerId() == wagerId) ? true : false;
-            childWagerCoin.UpdateCoinSelectedUi(isSelected);
+            if(isSelected)
+            {
+                childWagerCoin.SetIsSelected(true);
+                childWagerCoin.UpdateCoinSelectedUi(false);
+            } else
+            {
+                childWagerCoin.SetIsSelected(false);
+                bool hasEnoughMoneyToBet = (childWagerCoin.GetWagerAmount() > totalCoins) ? false : true;
+                childWagerCoin.UpdateCoinSelectedUi(hasEnoughMoneyToBet);
+            }
         }
     }
 
@@ -109,7 +172,13 @@ public class GameUiManager : MonoBehaviour {
         foreach(Transform child in wagerParentTransform)
         {
             WagerCoin wagerCoin = child.GetComponent<WagerCoin>();
-            wagerCoin.UpdateCoinSelectedUi(totalCoins);
+            if(wagerCoin.GetIsSelected() == false)
+            {
+                wagerCoin.UpdateCoinSelectedUi(totalCoins);
+            } else
+            {
+                wagerCoin.UpdateCoinSelectedUi(false);
+            }
         }
     }
 
@@ -124,13 +193,38 @@ public class GameUiManager : MonoBehaviour {
 
                 foreach (BetDetails betDetail in betType.BetDetails)
                 {
-                    if(betDetail.ShowBet)
+                    if (betDetail.ShowBet)
                     {
-                        BetButton betButton = betGroup.GetComponent<BetGroup>().GetBetButtonById(betDetail.BetId);
-                        betButton.InitBetButton(betType.BetTypeGroupId, betDetail.BetName, betDetail.Multiplier);
+                        Transform betButtonParent = betGroup.GetComponent<BetGroup>().GetButtonParent();
+                        GameObject betButtonGO = Instantiate(betButtonPrefab, betButtonParent);
+                        BetButton betButton = betButtonGO.GetComponent<BetButton>();
+                        betButton.InitBetButton(betDetail.BetId, betType.BetTypeGroupId, betDetail.BetName, betDetail.Multiplier, betDetail.NumberExistValue);
                     }
                 }
             }
         }
+    }
+
+    void AddDiceRollInResultPanel(List<int> diceRollResult)
+    {
+        GameObject diceResultGameObject = Instantiate(diceResultPrefab, diceResultParentTransform);
+        diceResultGameObject.transform.SetAsFirstSibling();
+        int ctr = 0;    
+        foreach(int diceRoll in diceRollResult)
+        {
+            if(diceResultGameObject.transform.childCount > ctr)
+            {
+                diceResultGameObject.transform.GetChild(ctr).gameObject.SetActive(true);
+                diceResultGameObject.transform.GetChild(ctr).GetComponentInChildren<Text>().text = diceRoll.ToString();
+            }
+            ctr++;
+        }
+    }
+
+    public void BetRoundDone(GameJsonFromServer gameJsonFromServer)
+    {
+        AddDiceRollInResultPanel(gameJsonFromServer.diceRollList);
+        ShowWonAmount(gameJsonFromServer.totalAmountWon);
+        EnablePlayButton(false);
     }
 }

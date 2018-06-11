@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class WagerCoin : MonoBehaviour {
 
+    private bool isSelected = false;
     private int wagerId;
     private int amount;
     private Image wagerCoinImage;
@@ -15,6 +16,21 @@ public class WagerCoin : MonoBehaviour {
     public int GetWagerId()
     {
         return wagerId;
+    }
+
+    public int GetWagerAmount()
+    {
+        return amount;
+    }
+
+    public void SetIsSelected(bool isSelected)
+    {
+        this.isSelected = isSelected;
+    }
+
+    public bool GetIsSelected()
+    {
+        return isSelected;
     }
 
     public void Init(int wagerId, int amount, Sprite wagerCoinSprite)
@@ -34,15 +50,12 @@ public class WagerCoin : MonoBehaviour {
 
     public void UpdateCoinSelectedUi(int totalAmount)
     {
-        if(amount > totalAmount)
-        {
-            wagerButton.interactable = false;
-        }
+        wagerButton.interactable = (amount > totalAmount) ? false : true;
     }
 
-    public void UpdateCoinSelectedUi(bool isSelected)
+    public void UpdateCoinSelectedUi(bool isInteractable)
     {
-        wagerButton.interactable = !isSelected;
+        wagerButton.interactable = isInteractable;
     }
 
     #region OnClick

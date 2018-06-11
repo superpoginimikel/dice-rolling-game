@@ -41,8 +41,11 @@ public class BetDetails
     public bool ShowBet;
     public int BetId;
     public string BetName;
+    public int NumberExistValue;
     public int Multiplier;
     public int MinRange;
     public int MaxRange;
+    public int MinValue;
+    public int MaxValue;
 }
 

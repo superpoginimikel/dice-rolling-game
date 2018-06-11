@@ -10,12 +10,12 @@ public class GameConfigUiManager : MonoBehaviour {
 
     public void ShowVersionUpdatePanel()
     {
-        // show version update panel
+        //TODO:: show version update panel
     }
 
     public void StartLoadingAnimation()
     {
-        // do loading animation, maybe a running dots on loading text
+        //TODO:: do loading animation, maybe a running dots on loading text
     }
    
     public void CompleteLoading()
